@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  Teck:
+    image: ghcr.io/Hepestoo/Docker-practica:latest
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.Teck.entrypoints=http"
+        - "traefik.http.routers.Teck.rule=Host(`Teck.alanrivera.com`)"
+        - "traefik.http.middlewares.Teck-https-redirect.redirectscheme.scheme=https"
+        - "traefik.http.routers.Teck.middlewares=Teck-https-redirect"
+        - "traefik.http.routers.Teck-secure.entrypoints=https"
+        - "traefik.http.routers.Teck-secure.rule=Host(`Teck.alanrivera.com`)"
+        - "traefik.http.routers.Teck-secure.tls=true"
+        - "traefik.http.routers.Teck-secure.tls.certresolver=http"
+        - "traefik.http.routers.Teck-secure.service=Teck"
+        - "traefik.http.services.Teck.loadbalancer.server.port=5000"
+        - "traefik.docker.network=traefik-public"
+    networks:
+      - traefik-public
+
+networks:
+  traefik-public:
+    external: true
